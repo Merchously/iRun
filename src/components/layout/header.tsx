@@ -5,13 +5,13 @@ export async function Header() {
   const session = await validateSession();
 
   return (
-    <header className="border-b border-border bg-background">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
-        <Link href="/" className="text-xl font-bold tracking-tight">
+    <header className="bg-background">
+      <div className="flex h-20 items-center justify-between px-6 md:px-16">
+        <Link href="/" className="text-2xl font-bold tracking-tight">
           iRun
         </Link>
 
-        <nav className="hidden items-center gap-6 text-sm md:flex">
+        <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
           <Link
             href="/articles"
             className="text-muted-foreground transition-colors hover:text-foreground"
@@ -48,7 +48,7 @@ export async function Header() {
           {session ? (
             <Link
               href="/account"
-              className="text-sm font-medium text-primary hover:text-primary/80"
+              className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
             >
               My iRun
             </Link>
@@ -56,13 +56,13 @@ export async function Header() {
             <>
               <Link
                 href="/login"
-                className="text-sm text-muted-foreground hover:text-foreground"
+                className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
               >
                 Log in
               </Link>
               <Link
                 href="/register"
-                className="inline-flex h-9 items-center rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground hover:bg-primary/90"
+                className="inline-flex h-10 items-center rounded-full bg-primary px-5 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90"
               >
                 Sign up
               </Link>
