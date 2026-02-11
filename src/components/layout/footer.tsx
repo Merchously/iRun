@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 
 export function Footer() {
   return (
@@ -6,8 +7,9 @@ export function Footer() {
       <div className="px-6 py-12 md:px-16 md:py-16">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div>
-            <Link href="/" className="text-xl font-bold tracking-tight">
-              iRun
+            <Link href="/" className="flex items-center gap-2">
+              <Image src="/logo.svg" alt="iRun" width={28} height={32} />
+              <span className="text-xl font-bold tracking-tight">iRun</span>
             </Link>
             <p className="mt-2 max-w-xs text-sm text-muted-foreground">
               Media, training, community, and commerce for Canadian runners.

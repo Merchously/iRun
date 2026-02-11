@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { validateSession } from "@/lib/auth/session";
 import { HeaderScroll } from "./header-scroll";
 
@@ -8,8 +9,9 @@ export async function Header() {
   return (
     <HeaderScroll>
       <div className="flex h-20 items-center justify-between px-6 md:px-16">
-        <Link href="/" className="text-2xl font-bold tracking-tight">
-          iRun
+        <Link href="/" className="flex items-center gap-2">
+          <Image src="/logo.svg" alt="iRun" width={32} height={37} priority />
+          <span className="text-2xl font-bold tracking-tight">iRun</span>
         </Link>
 
         <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
