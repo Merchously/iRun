@@ -41,13 +41,13 @@
   :root {
     --background: #111111;
     --foreground: #ededed;
-    --primary: #ff7a7a;
+    --primary: #FF3D00;
     --primary-foreground: #111111;
     --muted: #1c1c1c;
     --muted-foreground: #888888;
     --border: #2a2a2a;
     --input: #2a2a2a;
-    --ring: #ff7a7a;
+    --ring: #FF3D00;
     --destructive: #ef4444;
     --destructive-foreground: #ffffff;
     --card: #1c1c1c;
