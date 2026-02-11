@@ -12,22 +12,24 @@ services:
       db:
         condition: service_healthy
     networks:
-      - irun-internal
-      - traefik-public
+      - default
+      - root_default
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.irun.rule=Host(`app.irun.ca`)"
       - "traefik.http.routers.irun.entrypoints=websecure"
       - "traefik.http.routers.irun.tls=true"
-      - "traefik.http.routers.irun.tls.certresolver=cloudflare"
+      - "traefik.http.routers.irun.tls.certresolver=mytlschallenge"
       - "traefik.http.services.irun.loadbalancer.server.port=3000"
-      - "traefik.docker.network=traefik-public"
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
+      - "traefik.docker.network=root_default"
+      - "traefik.http.middlewares.irun-headers.headers.SSLRedirect=true"
+      - "traefik.http.middlewares.irun-headers.headers.STSSeconds=315360000"
+      - "traefik.http.middlewares.irun-headers.headers.browserXSSFilter=true"
+      - "traefik.http.middlewares.irun-headers.headers.contentTypeNosniff=true"
+      - "traefik.http.middlewares.irun-headers.headers.forceSTSHeader=true"
+      - "traefik.http.middlewares.irun-headers.headers.STSIncludeSubdomains=true"
+      - "traefik.http.middlewares.irun-headers.headers.STSPreload=true"
+      - "traefik.http.routers.irun.middlewares=irun-headers@docker"
 
   db:
     image: postgres:16-alpine
@@ -39,19 +41,11 @@ services:
       - POSTGRES_DB=irun
     volumes:
       - pgdata:/var/lib/postgresql/data
-    networks:
-      - irun-internal
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U irun"]
       interval: 10s
       timeout: 5s
       retries: 5
-    deploy:
-      resources:
-        limits:
-          memory: 512M
-        reservations:
-          memory: 256M
     command:
       - "postgres"
       - "-c"
@@ -70,7 +64,5 @@ volumes:
     driver: local
 
 networks:
-  irun-internal:
-    driver: bridge
-  traefik-public:
+  root_default:
     external: true
