@@ -1,11 +1,12 @@
 import Link from "next/link";
 import { validateSession } from "@/lib/auth/session";
+import { HeaderScroll } from "./header-scroll";
 
 export async function Header() {
   const session = await validateSession();
 
   return (
-    <header className="bg-background">
+    <HeaderScroll>
       <div className="flex h-20 items-center justify-between px-6 md:px-16">
         <Link href="/" className="text-2xl font-bold tracking-tight">
           iRun
@@ -14,31 +15,31 @@ export async function Header() {
         <nav className="hidden items-center gap-8 text-sm font-medium md:flex">
           <Link
             href="/articles"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="opacity-70 transition-opacity hover:opacity-100"
           >
             Articles
           </Link>
           <Link
             href="/training"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="opacity-70 transition-opacity hover:opacity-100"
           >
             Training
           </Link>
           <Link
             href="/events"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="opacity-70 transition-opacity hover:opacity-100"
           >
             Events
           </Link>
           <Link
             href="/clubs"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="opacity-70 transition-opacity hover:opacity-100"
           >
             Clubs
           </Link>
           <Link
             href="/shop"
-            className="text-muted-foreground transition-colors hover:text-foreground"
+            className="opacity-70 transition-opacity hover:opacity-100"
           >
             Shop
           </Link>
@@ -56,7 +57,7 @@ export async function Header() {
             <>
               <Link
                 href="/login"
-                className="hidden text-sm font-medium text-muted-foreground transition-colors hover:text-foreground sm:block"
+                className="hidden text-sm font-medium opacity-70 transition-opacity hover:opacity-100 sm:block"
               >
                 Log in
               </Link>
@@ -70,6 +71,6 @@ export async function Header() {
           )}
         </div>
       </div>
-    </header>
+    </HeaderScroll>
   );
 }

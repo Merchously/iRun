@@ -1,5 +1,6 @@
 import Link from "next/link";
 import Image from "next/image";
+import { HeroAnimations } from "@/components/home/hero-animations";
 
 const pillars = [
   {
@@ -35,36 +36,73 @@ const pillars = [
 export default function HomePage() {
   return (
     <>
-      {/* Hero */}
-      <section className="px-6 pb-24 pt-16 md:px-16 md:pb-40 md:pt-28">
-        <h1 className="max-w-4xl text-5xl font-semibold leading-[1.08] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
-          Your running,
-          <br />
-          <span className="text-primary">simplified.</span>
-        </h1>
-        <p className="mt-6 max-w-xl text-lg text-muted-foreground md:mt-8 md:text-xl">
-          Training plans, routes, events, and trusted running journalism — all
-          in one place. Built for Canadian runners.
-        </p>
-        <div className="mt-10 flex flex-wrap gap-4 md:mt-12">
-          <Link
-            href="/register"
-            className="inline-flex h-12 items-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:h-14 md:px-10 md:text-base"
+      <HeroAnimations />
+
+      {/* Hero with full background image */}
+      <section
+        data-hero
+        className="relative flex min-h-[90vh] items-end overflow-hidden md:min-h-screen"
+      >
+        {/* Background image with parallax */}
+        <div
+          data-hero-image
+          className="absolute inset-0 -top-[10%] h-[120%] w-full"
+        >
+          <Image
+            src="https://images.unsplash.com/photo-1486218119243-13883505764c?w=1920&h=1080&fit=crop"
+            alt="Runner at sunrise"
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover"
+          />
+        </div>
+
+        {/* Dark overlay */}
+        <div
+          data-hero-overlay
+          className="absolute inset-0 bg-black/50"
+        />
+
+        {/* Hero content — positioned at bottom-left */}
+        <div className="relative z-10 px-6 pb-16 pt-40 md:px-16 md:pb-24 md:pt-60">
+          <h1
+            data-hero-heading
+            className="max-w-4xl text-5xl font-semibold leading-[1.08] tracking-tight text-white sm:text-6xl md:text-7xl lg:text-8xl"
           >
-            Get started free
-          </Link>
-          <Link
-            href="/articles"
-            className="inline-flex h-12 items-center rounded-full border border-border px-8 text-sm font-medium transition-colors hover:bg-muted md:h-14 md:px-10 md:text-base"
+            <span className="block">Your running,</span>
+            <span className="block text-primary">simplified.</span>
+          </h1>
+          <p
+            data-hero-sub
+            className="mt-6 max-w-xl text-lg text-white/80 md:mt-8 md:text-xl"
           >
-            Read the magazine
-          </Link>
+            Training plans, routes, events, and trusted running journalism — all
+            in one place. Built for Canadian runners.
+          </p>
+          <div data-hero-cta className="mt-10 flex flex-wrap gap-4 md:mt-12">
+            <Link
+              href="/register"
+              className="inline-flex h-12 items-center rounded-full bg-primary px-8 text-sm font-medium text-primary-foreground transition-colors hover:bg-primary/90 md:h-14 md:px-10 md:text-base"
+            >
+              Get started free
+            </Link>
+            <Link
+              href="/articles"
+              className="inline-flex h-12 items-center rounded-full border border-white/30 px-8 text-sm font-medium text-white transition-colors hover:bg-white/10 md:h-14 md:px-10 md:text-base"
+            >
+              Read the magazine
+            </Link>
+          </div>
         </div>
       </section>
 
       {/* Pillar Cards */}
-      <section className="px-6 pb-24 md:px-16 md:pb-40">
-        <h2 className="text-3xl font-semibold tracking-tight md:text-4xl">
+      <section className="px-6 py-24 md:px-16 md:py-40">
+        <h2
+          data-animate
+          className="text-3xl font-semibold tracking-tight md:text-4xl"
+        >
           Explore iRun
         </h2>
         <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-4 md:mt-14">
@@ -72,6 +110,7 @@ export default function HomePage() {
             <Link
               key={pillar.href}
               href={pillar.href}
+              data-card
               className="group block overflow-hidden rounded-2xl bg-card transition-transform duration-300 hover:-translate-y-1"
             >
               <div className="relative aspect-[4/3] overflow-hidden">
@@ -97,7 +136,10 @@ export default function HomePage() {
       </section>
 
       {/* CTA Banner */}
-      <section className="bg-muted px-6 py-24 md:px-16 md:py-32">
+      <section
+        data-animate
+        className="bg-muted px-6 py-24 md:px-16 md:py-32"
+      >
         <div className="mx-auto max-w-3xl text-center">
           <h2 className="text-3xl font-semibold tracking-tight md:text-5xl">
             Join Canada&apos;s running community
