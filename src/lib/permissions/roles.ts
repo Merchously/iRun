@@ -1,0 +1,45 @@
+import type { Role, Permission } from "@/types/permissions";
+
+export const ROLE_PERMISSIONS: Record<Role, Permission[]> = {
+  admin: [
+    "article.create",
+    "article.edit_own",
+    "article.edit_any",
+    "article.publish",
+    "article.delete",
+    "order.view",
+    "order.refund",
+    "product.manage",
+    "promo.manage",
+    "ticket.view",
+    "ticket.respond",
+    "ticket.close",
+    "user.manage",
+    "role.assign",
+    "audit.view",
+    "analytics.view",
+  ],
+  editor: [
+    "article.create",
+    "article.edit_own",
+    "article.edit_any",
+    "article.publish",
+    "analytics.view",
+  ],
+  contributor: ["article.create", "article.edit_own"],
+  support: [
+    "ticket.view",
+    "ticket.respond",
+    "ticket.close",
+    "order.view",
+    "order.refund",
+  ],
+  commerce_ops: [
+    "order.view",
+    "order.refund",
+    "product.manage",
+    "promo.manage",
+  ],
+  partner: [],
+  runner: [],
+};

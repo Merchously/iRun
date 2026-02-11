@@ -1,0 +1,76 @@
+services:
+  app:
+    image: ghcr.io/merchously/irun:latest
+    container_name: irun-app
+    restart: unless-stopped
+    environment:
+      - DATABASE_URL=postgresql://irun:${DB_PASSWORD}@db:5432/irun
+      - SESSION_SECRET=${SESSION_SECRET}
+      - SITE_URL=https://app.irun.ca
+      - NODE_ENV=production
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - irun-internal
+      - traefik-public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.irun.rule=Host(`app.irun.ca`)"
+      - "traefik.http.routers.irun.entrypoints=websecure"
+      - "traefik.http.routers.irun.tls=true"
+      - "traefik.http.routers.irun.tls.certresolver=cloudflare"
+      - "traefik.http.services.irun.loadbalancer.server.port=3000"
+      - "traefik.docker.network=traefik-public"
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+
+  db:
+    image: postgres:16-alpine
+    container_name: irun-db
+    restart: unless-stopped
+    environment:
+      - POSTGRES_USER=irun
+      - POSTGRES_PASSWORD=${DB_PASSWORD}
+      - POSTGRES_DB=irun
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    networks:
+      - irun-internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U irun"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    deploy:
+      resources:
+        limits:
+          memory: 512M
+        reservations:
+          memory: 256M
+    command:
+      - "postgres"
+      - "-c"
+      - "shared_buffers=128MB"
+      - "-c"
+      - "effective_cache_size=256MB"
+      - "-c"
+      - "work_mem=4MB"
+      - "-c"
+      - "maintenance_work_mem=64MB"
+      - "-c"
+      - "max_connections=30"
+
+volumes:
+  pgdata:
+    driver: local
+
+networks:
+  irun-internal:
+    driver: bridge
+  traefik-public:
+    external: true
