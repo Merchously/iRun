@@ -250,6 +250,94 @@ export async function getAllEvents() {
   return db.select().from(events).orderBy(desc(events.createdAt));
 }
 
+export async function getSimilarEvents(
+  eventId: string,
+  terrain: string | null,
+  province: string,
+  limit = 6
+) {
+  const conditions = [
+    eq(events.status, "published"),
+    sql`${events.id} != ${eventId}`,
+  ];
+
+  // Prefer same terrain, fall back to same province
+  if (terrain) {
+    conditions.push(eq(events.terrain, terrain));
+  } else {
+    conditions.push(eq(events.province, province));
+  }
+
+  let rows = await db
+    .select()
+    .from(events)
+    .where(and(...conditions))
+    .orderBy(asc(events.startDate))
+    .limit(limit);
+
+  // If not enough results from terrain match, backfill with same province
+  if (rows.length < limit && terrain) {
+    const existingIds = rows.map((e) => e.id);
+    const backfill = await db
+      .select()
+      .from(events)
+      .where(
+        and(
+          eq(events.status, "published"),
+          sql`${events.id} != ${eventId}`,
+          eq(events.province, province),
+          existingIds.length > 0
+            ? sql`${events.id} NOT IN (${sql.join(existingIds.map((id) => sql`${id}`), sql`, `)})`
+            : sql`true`
+        )
+      )
+      .orderBy(asc(events.startDate))
+      .limit(limit - rows.length);
+    rows = [...rows, ...backfill];
+  }
+
+  // If still not enough, grab any published events
+  if (rows.length < limit) {
+    const existingIds = rows.map((e) => e.id);
+    const backfill = await db
+      .select()
+      .from(events)
+      .where(
+        and(
+          eq(events.status, "published"),
+          sql`${events.id} != ${eventId}`,
+          existingIds.length > 0
+            ? sql`${events.id} NOT IN (${sql.join(existingIds.map((id) => sql`${id}`), sql`, `)})`
+            : sql`true`
+        )
+      )
+      .orderBy(asc(events.startDate))
+      .limit(limit - rows.length);
+    rows = [...rows, ...backfill];
+  }
+
+  const eventIds = rows.map((e) => e.id);
+  const distances =
+    eventIds.length > 0
+      ? await db
+          .select()
+          .from(eventDistances)
+          .where(inArray(eventDistances.eventId, eventIds))
+      : [];
+
+  const distancesByEvent = new Map<string, typeof distances>();
+  for (const d of distances) {
+    const existing = distancesByEvent.get(d.eventId) || [];
+    existing.push(d);
+    distancesByEvent.set(d.eventId, existing);
+  }
+
+  return rows.map((e) => ({
+    ...e,
+    distances: distancesByEvent.get(e.id) || [],
+  }));
+}
+
 export async function incrementViewCount(eventId: string) {
   await db
     .update(events)

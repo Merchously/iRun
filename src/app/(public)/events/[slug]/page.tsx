@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getEventBySlug, incrementViewCount } from "@/lib/queries/events";
+import { getEventBySlug, getSimilarEvents, incrementViewCount } from "@/lib/queries/events";
+import { EventCard } from "@/components/events/event-card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -42,6 +43,13 @@ export default async function EventDetailPage({ params }: PageProps) {
 
   // Fire and forget view count
   incrementViewCount(event.id).catch(() => {});
+
+  const similarEvents = await getSimilarEvents(
+    event.id,
+    event.terrain,
+    event.province,
+    6
+  );
 
   const heroImage =
     event.heroImageUrl ||
@@ -286,6 +294,37 @@ export default async function EventDetailPage({ params }: PageProps) {
           </div>
         </div>
       </div>
+
+      {/* More Races Like This */}
+      {similarEvents.length > 0 && (
+        <section className="border-t border-border px-5 py-12 md:px-12 md:py-16 lg:px-20">
+          <div className="mx-auto max-w-6xl">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              More Races Like This
+            </h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Similar events you might enjoy
+            </p>
+            <div className="scrollbar-hide mt-6 flex gap-4 overflow-x-auto md:mt-8 md:gap-6">
+              {similarEvents.map((e) => (
+                <EventCard
+                  key={e.id}
+                  slug={e.slug}
+                  name={e.name}
+                  startDate={e.startDate}
+                  city={e.city}
+                  province={e.province}
+                  terrain={e.terrain}
+                  heroImageUrl={e.heroImageUrl}
+                  thumbnailUrl={e.thumbnailUrl}
+                  priceFromCad={e.priceFromCad}
+                  distances={e.distances}
+                />
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
