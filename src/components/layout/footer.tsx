@@ -4,7 +4,7 @@ import Image from "next/image";
 export function Footer() {
   return (
     <footer className="border-t border-border bg-background">
-      <div className="px-6 py-12 md:px-16 md:py-16">
+      <div className="px-5 py-12 md:px-12 md:py-16 lg:px-20">
         <div className="flex flex-col gap-10 md:flex-row md:justify-between">
           <div>
             <Link href="/" className="flex items-center gap-2">
@@ -38,7 +38,13 @@ export function Footer() {
                   href="/events"
                   className="text-foreground/80 hover:text-foreground"
                 >
-                  Events
+                  Races & Events
+                </Link>
+                <Link
+                  href="/routes"
+                  className="text-foreground/80 hover:text-foreground"
+                >
+                  Routes
                 </Link>
                 <Link
                   href="/clubs"

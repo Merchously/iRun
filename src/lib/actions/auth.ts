@@ -58,7 +58,7 @@ export async function register(
   await createSession(newUser.id);
   await logAction(newUser.id, "user.register", "user", newUser.id);
 
-  redirect("/account");
+  redirect("/account/onboarding");
 }
 
 export async function login(

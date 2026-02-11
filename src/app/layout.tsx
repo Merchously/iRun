@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { cookies } from "next/headers";
 import { Poppins, Roboto } from "next/font/google";
+import { ThemeProvider } from "@/lib/theme";
 import "./globals.css";
 
 const poppins = Poppins({
@@ -23,17 +25,21 @@ export const metadata: Metadata = {
     "Media, training, community, and commerce for Canadian runners.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const cookieStore = await cookies();
+  const themeCookie = cookieStore.get("irun-theme")?.value;
+  const initialClass = themeCookie === "dark" ? "dark" : "light";
+
   return (
-    <html lang="en">
+    <html lang="en" className={initialClass} suppressHydrationWarning>
       <body
         className={`${poppins.variable} ${roboto.variable} font-sans antialiased`}
       >
-        {children}
+        <ThemeProvider>{children}</ThemeProvider>
       </body>
     </html>
   );
