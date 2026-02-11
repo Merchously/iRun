@@ -50,6 +50,9 @@ export const events = pgTable("events", {
   // Weather (historical averages)
   avgTemperatureCelsius: integer("avg_temperature_celsius"),
   avgPrecipitationMm: integer("avg_precipitation_mm"),
+  avgHumidityPercent: integer("avg_humidity_percent"),
+  avgWindKmh: integer("avg_wind_kmh"),
+  altitudeMetres: integer("altitude_metres"),
   weatherNotes: text("weather_notes"),
 
   // Pricing

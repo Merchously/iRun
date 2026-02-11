@@ -6,6 +6,7 @@ import { getEventBySlug, incrementViewCount } from "@/lib/queries/events";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { EventInfoCards } from "@/components/events/event-info-cards";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -109,6 +110,21 @@ export default async function EventDetailPage({ params }: PageProps) {
               )}
             </div>
 
+            {/* Race info cards with animations */}
+            <div className="mt-8">
+              <EventInfoCards
+                terrain={event.terrain}
+                priceFromCad={event.priceFromCad}
+                priceToCad={event.priceToCad}
+                elevationGainMetres={event.elevationGainMetres}
+                avgTemperatureCelsius={event.avgTemperatureCelsius}
+                avgHumidityPercent={event.avgHumidityPercent}
+                avgWindKmh={event.avgWindKmh}
+                altitudeMetres={event.altitudeMetres}
+                weatherNotes={event.weatherNotes}
+              />
+            </div>
+
             {/* Distances */}
             {event.distances.length > 0 && (
               <div className="mt-10">
@@ -185,42 +201,6 @@ export default async function EventDetailPage({ params }: PageProps) {
               </div>
             )}
 
-            {/* Weather */}
-            {(event.avgTemperatureCelsius != null ||
-              event.weatherNotes) && (
-              <div className="mt-10">
-                <h2 className="text-xl font-semibold">
-                  Typical Weather
-                </h2>
-                <div className="mt-4 grid gap-4 sm:grid-cols-3">
-                  {event.avgTemperatureCelsius != null && (
-                    <div className="rounded-xl border border-border p-4 text-center">
-                      <p className="text-2xl font-semibold">
-                        {event.avgTemperatureCelsius}&deg;C
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Avg. temperature
-                      </p>
-                    </div>
-                  )}
-                  {event.avgPrecipitationMm != null && (
-                    <div className="rounded-xl border border-border p-4 text-center">
-                      <p className="text-2xl font-semibold">
-                        {event.avgPrecipitationMm}mm
-                      </p>
-                      <p className="text-sm text-muted-foreground">
-                        Avg. precipitation
-                      </p>
-                    </div>
-                  )}
-                </div>
-                {event.weatherNotes && (
-                  <p className="mt-3 text-sm text-muted-foreground">
-                    {event.weatherNotes}
-                  </p>
-                )}
-              </div>
-            )}
 
             {/* Tags & amenities */}
             {event.tags && event.tags.length > 0 && (
