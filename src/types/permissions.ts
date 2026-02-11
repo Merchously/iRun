@@ -29,6 +29,13 @@ export const PERMISSIONS = {
   "ticket.respond": true,
   "ticket.close": true,
 
+  // Events
+  "event.create": true,
+  "event.edit_own": true,
+  "event.edit_any": true,
+  "event.publish": true,
+  "event.delete": true,
+
   // Admin
   "user.manage": true,
   "role.assign": true,

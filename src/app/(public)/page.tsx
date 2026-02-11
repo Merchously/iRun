@@ -1,54 +1,8 @@
 import Link from "next/link";
 import Image from "next/image";
 import { HeroAnimations } from "@/components/home/hero-animations";
-
-const featuredRaces = [
-  {
-    title: "Toronto Waterfront Marathon",
-    date: "October 2026",
-    city: "Toronto, ON",
-    distances: ["5K", "Half", "Marathon"],
-    image:
-      "https://images.unsplash.com/photo-1513593771513-7b58b6c4af38?w=640&h=400&fit=crop",
-    href: "/events",
-  },
-  {
-    title: "BMO Vancouver Marathon",
-    date: "May 2026",
-    city: "Vancouver, BC",
-    distances: ["8K", "Half", "Marathon"],
-    image:
-      "https://images.unsplash.com/photo-1544899489-a083461b088c?w=640&h=400&fit=crop",
-    href: "/events",
-  },
-  {
-    title: "Ottawa Marathon",
-    date: "May 2026",
-    city: "Ottawa, ON",
-    distances: ["5K", "10K", "Half", "Marathon"],
-    image:
-      "https://images.unsplash.com/photo-1552674605-db6ffd4facb5?w=640&h=400&fit=crop",
-    href: "/events",
-  },
-  {
-    title: "Bluenose Marathon",
-    date: "May 2026",
-    city: "Halifax, NS",
-    distances: ["5K", "10K", "Half", "Marathon"],
-    image:
-      "https://images.unsplash.com/photo-1571008887538-b36bb32f4571?w=640&h=400&fit=crop",
-    href: "/events",
-  },
-  {
-    title: "Banff Marathon",
-    date: "June 2026",
-    city: "Banff, AB",
-    distances: ["Half", "Marathon"],
-    image:
-      "https://images.unsplash.com/photo-1486218119243-13883505764c?w=640&h=400&fit=crop",
-    href: "/events",
-  },
-];
+import { EventCard } from "@/components/events/event-card";
+import { getFeaturedEvents, getUpcomingEvents } from "@/lib/queries/events";
 
 const latestArticles = [
   {
@@ -103,7 +57,14 @@ const howItWorks = [
   },
 ];
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [featured, upcoming] = await Promise.all([
+    getFeaturedEvents(6),
+    getUpcomingEvents(6),
+  ]);
+
+  const racesToShow = featured.length > 0 ? featured : upcoming;
+
   return (
     <>
       <HeroAnimations />
@@ -165,75 +126,53 @@ export default function HomePage() {
       </section>
 
       {/* Featured Races Carousel */}
-      <section className="px-5 py-20 md:px-12 md:py-32 lg:px-20">
-        <div data-animate className="flex items-end justify-between">
-          <div>
-            <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
-              Featured Races
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground md:text-base">
-              Discover Canada&apos;s best running events
-            </p>
-          </div>
-          <Link
-            href="/events"
-            className="hidden text-sm font-medium text-primary hover:underline md:block"
-          >
-            View all races
-          </Link>
-        </div>
-
-        <div className="scrollbar-hide mt-8 flex gap-4 overflow-x-auto md:mt-10 md:gap-6">
-          {featuredRaces.map((race) => (
+      {racesToShow.length > 0 && (
+        <section className="px-5 py-20 md:px-12 md:py-32 lg:px-20">
+          <div data-animate className="flex items-end justify-between">
+            <div>
+              <h2 className="text-2xl font-semibold tracking-tight md:text-3xl">
+                {featured.length > 0 ? "Featured Races" : "Upcoming Races"}
+              </h2>
+              <p className="mt-1 text-sm text-muted-foreground md:text-base">
+                Discover Canada&apos;s best running events
+              </p>
+            </div>
             <Link
-              key={race.title}
-              href={race.href}
-              data-card
-              className="group w-72 flex-none md:w-80"
-              style={{ scrollSnapAlign: "start" }}
+              href="/events"
+              className="hidden text-sm font-medium text-primary hover:underline md:block"
             >
-              <div className="overflow-hidden rounded-2xl bg-card transition-transform duration-300 group-hover:-translate-y-1">
-                <div className="relative aspect-[16/10] overflow-hidden">
-                  <Image
-                    src={race.image}
-                    alt={race.title}
-                    fill
-                    sizes="320px"
-                    className="object-cover transition-transform duration-500 group-hover:scale-105"
-                  />
-                </div>
-                <div className="p-4 md:p-5">
-                  <h3 className="font-semibold group-hover:text-primary">
-                    {race.title}
-                  </h3>
-                  <p className="mt-1 text-sm text-muted-foreground">
-                    {race.date} &middot; {race.city}
-                  </p>
-                  <div className="mt-3 flex flex-wrap gap-1.5">
-                    {race.distances.map((d) => (
-                      <span
-                        key={d}
-                        className="inline-flex items-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
-                      >
-                        {d}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-              </div>
+              View all races
             </Link>
-          ))}
-        </div>
+          </div>
 
-        <div className="mt-6 text-center md:hidden">
-          <Link
-            href="/events"
-            className="text-sm font-medium text-primary hover:underline"
-          >
-            View all races
-          </Link>
-        </div>
-      </section>
+          <div className="scrollbar-hide mt-8 flex gap-4 overflow-x-auto md:mt-10 md:gap-6">
+            {racesToShow.map((event) => (
+              <EventCard
+                key={event.id}
+                slug={event.slug}
+                name={event.name}
+                startDate={event.startDate}
+                city={event.city}
+                province={event.province}
+                terrain={event.terrain}
+                heroImageUrl={event.heroImageUrl}
+                thumbnailUrl={event.thumbnailUrl}
+                priceFromCad={event.priceFromCad}
+                distances={event.distances}
+              />
+            ))}
+          </div>
+
+          <div className="mt-6 text-center md:hidden">
+            <Link
+              href="/events"
+              className="text-sm font-medium text-primary hover:underline"
+            >
+              View all races
+            </Link>
+          </div>
+        </section>
+      )}
 
       {/* How iRun Works */}
       <section
